@@ -77,15 +77,12 @@ function startQuiz(){
     score = 0;
     nextButton.innerHTML = 'Next';
     showQuestion();
-}
+} 
 
 function showQuestion() {
     resetState();
-    console.log(questionElement);
      let currenQuestion = questions[currenQuestionIndex];
-     console.log(currenQuestion);
      let questionNo = currenQuestionIndex + 1;
-     console.log(questionNo);
      questionElement.innerHTML = `${questionNo}. ${currenQuestion.question} `;
 
      currenQuestion.answers.forEach(answer =>{
@@ -109,6 +106,48 @@ function resetState(){
 }
 
 
-function selectAnswer(){
-    
+function selectAnswer(e){
+    const selectedButton = e.target;
+    const isCorrect = selectedButton.dataset.correct === 'true';
+    if(isCorrect){
+        selectedButton.classList.add('correct');
+        score++;
+    }
+    else{
+        selectedButton.classList.add('incorrect');
+    }
+
+    Array.from(answerButtons.children).forEach(button =>{
+        if(button.dataset.correct === 'true'){
+            button.classList.add('correct');
+        }
+        button.disabled = true;
+    });
+    nextButton.style.display ="block";
 }
+
+nextButton.addEventListener('click', ()=>{
+    if(currenQuestionIndex < questions.length){
+        handleNextButton();
+    }else{
+        startQuiz();
+    }
+})
+
+function handleNextButton(){
+    currenQuestionIndex++;
+    if(currenQuestionIndex < questions.length){
+        showQuestion();
+    }
+    else{
+        showScore();
+    }
+}
+
+function showScore(){
+    resetState();
+    questionElement.innerHTML = `You scored ${score} out of ${questions.length}`;
+    nextButton.innerHTML = 'Play Again';
+    nextButton.style.display = "block";
+}
+
